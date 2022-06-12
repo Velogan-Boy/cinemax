@@ -1,16 +1,13 @@
-import React from 'react';
-import Subheads from '../components/UI/Subheads';
-import MainCarousel from '../components/MainCarousel';
-import CarouselButton from '../components/UI/CarouselButton';
-import MainFooter from '../components/MainFooter';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
-import CircularProgress from '@mui/material/CircularProgress';
-import { Box , styled} from '@mui/system';
 import { makeStyles } from '@mui/styles';
+import { Box, styled } from '@mui/system';
+import MainFooter from '../components/MainFooter';
+import CircularProgress from '@mui/material/CircularProgress';
 import background from '../assets/netflix.jpg';
 import SearchBar from '../components/UI/SearchBar';
-import SearchIcon from '@mui/icons-material/Search';
+import Subheads from '../components/UI/Subheads';
+import MainCarousel from '../components/MainCarousel';
 import { Typography, Button } from '@mui/material';
 
 const useStyles = makeStyles((theme) => ({
@@ -67,34 +64,65 @@ const useStyles = makeStyles((theme) => ({
       color: `${theme.palette.secondary.main}`,
       display: 'block',
    },
-
-   
 }));
 
-
 const ExploreButton = styled(Button)({
-   
-})
+   fontSize: '1.3rem',
+
+   '@media (max-width: 600px)': {
+      fontSize: '0.9rem',
+      marginTop: '1rem',
+   },
+});
 
 export default function Home() {
-   const [state, setState] = useState({ loading: true, data: [] });
+   const [trending, setTrending] = useState([]);
+   const [popular, setPopular] = useState([]);
+   const [nowPlaying, setNowPlaying] = useState([]);
+   const [genre, setGenre] = useState([]);
+
+   const [isLoading, setLoading] = useState(true);
+   const [isLoading1, setLoading1] = useState(true);
+   const [isLoading2, setLoading2] = useState(true);
    const classes = useStyles();
 
-   // useEffect(() => {
-   //    (async function () {
-   //       try {
-   //          const response = await axios.get(
-   //             'https://cinematrix-backend.herokuapp.com/api/v1/movies'
-   //          );
-   //          setState({ loading: false, data: response.data.data });
-   //       } catch (error) {
-   //          console.error(error);
-   //       }
-   //    })();
-   // }, []);
+   useEffect(() => {
+      (async function () {
+         try {
+            const trendingResponse = await axios.get(`https://api.themoviedb.org/3/trending/movie/day?api_key=${process.env.REACT_APP_TMDB_API_KEY}`);
+
+            setTrending(trendingResponse.data.results);
+            
+            setLoading(false);
+            
+            
+
+            const popularResponse = await axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=${process.env.REACT_APP_TMDB_API_KEY}`);
+
+            setPopular(popularResponse.data.results);
+            
+            setLoading1(false);
+            
+
+            const nowPlayingResponse = await axios.get(`https://api.themoviedb.org/3/movie/now_playing?api_key=${process.env.REACT_APP_TMDB_API_KEY}`);
+
+            setNowPlaying(nowPlayingResponse.data.results);
+            
+            setLoading2(false);
+            
+
+            const genreResponse = await axios.get(`https://api.themoviedb.org/3/genre/movie/list?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US`);
+
+            setGenre(genreResponse.data.genres);
+
+         } catch (error) {
+            console.error(error);
+         }
+      })();
+   }, []);
 
    return (
-      <React.Fragment>
+      <>
          <Box className={classes.box}>
             <Box className={classes.innerBox}>
                <h1 className={classes.heroText}>
@@ -109,7 +137,7 @@ export default function Home() {
             </Box>
          </Box>
 
-         {/* <Subheads>Now Showing</Subheads>
+         <Subheads>What's Popular</Subheads>
          <Box
             sx={{
                display: 'flex',
@@ -117,14 +145,12 @@ export default function Home() {
                alignItems: 'center',
             }}
          >
-            {state.loading && <CircularProgress color="secondary" />}
+            {isLoading && <CircularProgress color="secondary" />}
          </Box>
-         <MainCarousel data={state.data} label="nowShowing" />
-         <Box mb={6}>&nbsp;</Box> */}
-         {/* <MainCarousel data={state.data.slice().reverse()} label="nowShowing" /> */}
-         {/* <CarouselButton>{'View All >'}</CarouselButton> */}
-         {/* <Subheads>Opening next week</Subheads>
+         <MainCarousel data={trending} genre={genre} />
+         <Box mb={6}>&nbsp;</Box>
 
+         <Subheads>What's Trending</Subheads>
          <Box
             sx={{
                display: 'flex',
@@ -132,11 +158,12 @@ export default function Home() {
                alignItems: 'center',
             }}
          >
-            {state.loading && <CircularProgress color="secondary" />}
+            {isLoading1 && <CircularProgress color="secondary" />}
          </Box>
-         <MainCarousel data={state.data} label="openingNextWeek" />
-         <CarouselButton>{'View All >'}</CarouselButton>
-         <Subheads>Coming Soon</Subheads>
+         <MainCarousel data={popular} genre={genre} />
+         <Box mb={6}>&nbsp;</Box>
+
+         <Subheads>Now playing</Subheads>
          <Box
             sx={{
                display: 'flex',
@@ -144,13 +171,12 @@ export default function Home() {
                alignItems: 'center',
             }}
          >
-            {state.loading && <CircularProgress color="secondary" />}
+            {isLoading2 && <CircularProgress color="secondary" />}
          </Box>
-         <MainCarousel data={state.data} label="comingSoon" />
-         <CarouselButton style={{ marginBottom: '10rem' }}>
-            {'View All >'}
-         </CarouselButton> */}
+         <MainCarousel data={nowPlaying} genre={genre} />
+         <Box mb={6}>&nbsp;</Box>
+
          <MainFooter />
-      </React.Fragment>
+      </>
    );
 }

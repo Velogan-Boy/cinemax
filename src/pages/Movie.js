@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import MovieDetails from '../components/MovieDetails';
-import MovieBook from '../components/MovieBook';
-import MainFooter from '../components/MainFooter';
 import axios from 'axios';
-
 import { useParams } from 'react-router';
+
+import { CircularProgress } from '@mui/material';
+import MovieDetails from '../components/MovieDetails';
+import MainFooter from '../components/MainFooter';
 import Subheads from '../components/UI/Subheads';
-import CarouselButton from '../components/UI/CarouselButton';
 import MainCarousel from '../components/MainCarousel';
 
 export default function Movie() {
@@ -22,8 +21,7 @@ export default function Movie() {
          types: ['3D/2D', 'IMAX'],
          genre: ['Action', 'Adventure', 'Thriller'],
          languages: ['English'],
-         poster:
-            'https://image.tmdb.org/t/p/w500/iUgygt3fscRoKWCV1d0C7FbM9TP.jpg',
+         poster: 'https://image.tmdb.org/t/p/w500/iUgygt3fscRoKWCV1d0C7FbM9TP.jpg',
          boxOffice: '$605,756,260',
          runTime: '2h 43m',
          trailerURL: 'https://www.youtube.com/watch?v=vw2FOYjCz38',
@@ -37,53 +35,64 @@ export default function Movie() {
    });
 
    const [dataGenre, setDataGenre] = useState([]);
+   const [loading, setLoading] = useState(true);
 
    useEffect(() => {
-      (async function () {
-         try {
-            const response = await axios.get(
-               `https://cinematrix-backend.herokuapp.com/api/v1/movies/${id}`
-            );
-            setState({ loading: false, data: response.data.data });
-         } catch (error) {
-            console.error(error);
+      const getMovie = async () => {
+         if (id.slice(0, 2) == 'tt') {
+            const response = await axios.get(`https://www.omdbapi.com/?i=${id}&plot=full&apiKey=${process.env.REACT_APP_OMDB_API_KEY}`);
+
+            setState({
+               loading: false,
+               data: {
+                  mid: response.data.imdbID,
+                  title: response.data.Title,
+                  censor: response.data.Rated,
+                  types: response.data.Genre.split(','),
+                  genre: response.data.Genre.split(','),
+                  languages: response.data.Language.split(','),
+                  poster: response.data.Poster,
+                  boxOffice: response.data.BoxOffice,
+                  runTime: response.data.Runtime,
+                  trailerURL: response.data.Website,
+                  plot: response.data.Plot,
+                  castCrew: response.data.Actors.split(','),
+                  rating: response.data.imdbRating,
+                  releaseDate: response.data.Released,
+               },
+            });
+         } else {
+            const response = await axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}`);
+
+            setState({
+               loading: false,
+               data: {
+                  mid: response.data.imdb_id,
+                  title: response.data.title,
+                  censor: response.data.certification,
+                  types: response.data.genres.map((genre) => genre.name),
+                  genre: response.data.genres.map((genre) => genre.name),
+                  languages: response.data.spoken_languages.map((language) => language.name),
+                  poster: response.data.poster_path ? `https://image.tmdb.org/t/p/w500/${response.data.poster_path}` : 'https://via.placeholder.com/500x750',
+                  boxOffice: response.data.revenue,
+                  runTime: response.data.runtime,
+                  trailerURL: response.data.homepage,
+                  plot: response.data.overview,
+                  castCrew: response.data.credits?.cast.map((cast) => cast.name),
+                  rating: response.data.vote_average,
+                  releaseDate: response.data.release_date,
+               },
+            });
          }
-      })();
+      };
+
+      getMovie();
    }, [id]);
 
-   useEffect(() => {
-      (async function () {
-         try {
-            const response = await axios.get(
-               `https://cinematrix-backend.herokuapp.com/api/v1/movies/genre/${state.data.genre[0]}`
-            );
-            setDataGenre(response.data.data);
-         } catch (error) {
-            console.error(error);
-         }
-      })();
-   }, [state]);
-
-   // useEffect(() => {
-   //    console.log(state);
-   // }, [state]);
-
    return (
-      <div>
-         <MovieDetails
-            loading={state.loading}
-            data={!state.loading ? state.data : state.jokeComponents}
-         />
-         <MovieBook />
-         <Subheads>You may also like</Subheads>
-         <MainCarousel
-            data={dataGenre.filter(movie => movie._id !== id)}
-            label="nowShowing"
-         />
-         <CarouselButton style={{ marginBottom: '10rem' }}>
-            {'View All >'}
-         </CarouselButton>
+      <>
+         <MovieDetails loading={state.loading} data={!state.loading ? state.data : state.jokeComponents} />
          <MainFooter />
-      </div>
+      </>
    );
 }

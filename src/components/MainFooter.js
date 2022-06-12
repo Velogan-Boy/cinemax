@@ -33,16 +33,20 @@ export default function MainFooter() {
                ],
             },
             {
-               title: '"CINEMATRIX"',
+               title: '"CINEMAX"',
                style: {
                   textAlign: 'center',
                },
                items: [
                   {
-                     title: 'Cinematrix is the movie ticket booking web app.',
+                     title: 'Cinemax is the movie database website',
                   },
                   {
                      title: 'Designed and implemented by aspiring Full Stack Web Developer.',
+                  },
+                  
+                  {
+                     title: 'Computer Society of Anna University (CSAU)',
                   },
                   {
                      title: `Velmurugan Jeyakumar`,

@@ -1,10 +1,11 @@
+import {useState,useEffect} from 'react';
 import { styled } from '@mui/system';
 import { alpha } from '@mui/system';
 import { InputBase } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 import axios from 'axios';
-import { useState } from 'react';
+import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+
 
 //////////////////////////////////////////////////////////////
 
@@ -49,31 +50,33 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export default function MobileSearchBar() {
-   const [state, setState] = useState([]);
-   const [autoComplete, setAutocomplete] = useState(false);
 
-   const renderList = async e => {
-      if (e.target.value) {
-         const response = await axios.get(
-            `https://cinematrix-backend.herokuapp.com/api/v1/movies/movie/search?title=${e.target.value}`
-         );
-         setState(response.data.data);
-         setAutocomplete(true);
-      } else {
-         setAutocomplete(false);
-      }
-   };
+   
+     const [state, setState] = useState([]);
+     const [autoComplete, setAutocomplete] = useState(false);
 
+        const renderList = async (e) => {
+           if (e.target.value) {
+              const response = await axios.get(`https://www.omdbapi.com/?t=${e.target.value}&apiKey=${process.env.REACT_APP_OMDB_API_KEY}`);
+
+              console.log(response.data);
+
+              if (response.data.Response !== 'False') {
+                 setState([response.data]);
+              }
+
+              setAutocomplete(true);
+           } else {
+              setAutocomplete(false);
+           }
+        };
+   
    return (
       <SearchField>
          <SearchIconWrapper>
             <SearchIcon />
          </SearchIconWrapper>
-         <StyledInputBase
-            placeholder="Search movies or theatres.."
-            onChange={renderList}
-            onBlur={() => setAutocomplete(false)}
-         />
+         <StyledInputBase placeholder="Powered by OMDB.." onChange={renderList} onBlur={() => setAutocomplete(false)} />
          <List
             elevation={28}
             sx={{
@@ -88,16 +91,16 @@ export default function MobileSearchBar() {
             }}
          >
             {state.length !== 0 ? (
-               state.map(movie => (
-                  <ListItem disablePadding key={movie._id}>
+               state.map((movie) => (
+                  <ListItem disablePadding key={movie.imdbID}>
                      <ListItemButton
                         // component="a"
                         // href={`movie/${movie.id}`}
-                        onMouseDown={e => {
-                           window.location = `/movie/${movie.id}`;
+                        onMouseDown={(e) => {
+                           window.location = `/movie/${movie.imdbID}`;
                         }}
                      >
-                        <ListItemText primary={movie.title} />
+                        <ListItemText primary={movie.Title} />
                      </ListItemButton>
                   </ListItem>
                ))

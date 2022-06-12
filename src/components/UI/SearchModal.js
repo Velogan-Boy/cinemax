@@ -23,7 +23,7 @@ export default function SearchModal(props) {
          <Modal open={props.isModal} onClose={props.toggleModal}>
             <Box sx={style}>
                <Typography variant="h6" sx={{ mb: 2 }}>
-                  Search for Movies / Theatres:
+                  Search for Movies 
                </Typography>
                <MobileSearchBar />
             </Box>

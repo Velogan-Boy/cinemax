@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Switch , Route } from 'react-router-dom';
 
 import NavBar from './components/NavBar';
 import Home from './pages/Home';
-import Movies from './pages/Movies';
 import Movie from './pages/Movie';
 
 import NotFound from './pages/NotFound';
@@ -17,9 +16,8 @@ export default function App() {
             <NavBar />
             <Switch>
                <Route exact path="/" children={<Home />} />
-               {/* <Route exact path="/movies" children={<Movies />} />
                <Route exact path="/movie/:id" children={<Movie />} />
-               <Route path="*" children={<NotFound />}></Route> */}
+               <Route path="*" children={<NotFound />}></Route> 
             </Switch>
          </ScrollToTop>
       </Router>

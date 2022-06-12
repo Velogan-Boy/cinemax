@@ -120,7 +120,7 @@ export default function MovieDetails(props) {
                      {props.data.genre.join(', ')}
                   </Typography>
                   <Typography variant={'body'} color="white">
-                     {props.data.castCrew.join(', ')}
+                     {props.data.castCrew ? props.data.castCrew.join(', ') : ''}
                   </Typography>
                   <Box className={classes.box}>
                      <Box
@@ -144,7 +144,7 @@ export default function MovieDetails(props) {
                               Run Time:
                            </Typography>
                            <Typography variant={'h5'} color="secondary">
-                              {props.data.runTime}
+                              {props.data.runTime} 
                            </Typography>
                         </Box>
                      </Box>
@@ -160,15 +160,15 @@ export default function MovieDetails(props) {
                               Box Office:
                            </Typography>
                            <Typography variant={'h5'} color="secondary">
-                              {props.data.boxOffice}
+                              {props.data.boxOffice ? props.data.boxOffice : 'N/A'}
                            </Typography>
                         </Box>
                         <Box>
                            <Typography variant={'body'} color="white">
-                              Ratings:
+                              Rating:
                            </Typography>
                            <Typography variant={'h5'} color="secondary">
-                              {`${props.data.rating}/5`}
+                              {`${props.data.rating}/10`}
                            </Typography>
                         </Box>
                      </Box>

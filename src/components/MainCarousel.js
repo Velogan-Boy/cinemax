@@ -28,8 +28,9 @@ const responsive = {
 };
 
 function MainCarousel(props) {
-   let movieData = props.data.filter(movie => movie.status === props.label);
+   let movieData = props.data.slice(0, 10);
 
+   
    return (
       <Carousel
          // itemClass="image-item"
@@ -53,7 +54,7 @@ function MainCarousel(props) {
          removeArrowOnDeviceType={['tablet', 'mobile']}
       >
          {movieData.map(movie => (
-            <Cards id={movie._id} key={movie._id} data={movie} />
+            <Cards id={movie.id} key={movie.id} data={movie} genre={props.genre} />
          ))}
       </Carousel>
    );

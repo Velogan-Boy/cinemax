@@ -131,8 +131,7 @@ export default function NavBar() {
                <StyledFab color="secondary" onClick={toggleModal}>
                   <SearchIcon />
                </StyledFab>
-               <Box sx={{ flexGrow: 1 }} />
-               <MobileLocationSelect />
+               
             </Toolbar>
          </AppBar>
          <SearchModal isModal={isModal} toggleModal={toggleModal} />

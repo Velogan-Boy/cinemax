@@ -1,8 +1,10 @@
+import { useState, useEffect } from 'react';
 import { styled } from '@mui/system';
 import { alpha } from '@mui/system';
 import { InputBase } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { useState } from 'react';
+import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import axios from 'axios';
 
 ////////////////////////////////////////////////////////////////////
 
@@ -53,8 +55,25 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function SearchBar() {
    const [state, setState] = useState([]);
+   const [autoComplete, setAutocomplete] = useState(false);
 
- 
+   const renderList = async (e) => {
+      if (e.target.value) {
+         const response = await axios.get(`https://www.omdbapi.com/?t=${e.target.value}&apiKey=${process.env.REACT_APP_OMDB_API_KEY}`);
+
+         console.log(response.data);
+         
+         if (response.data.Response !== 'False') {
+            setState([response.data]);
+         }
+
+         setAutocomplete(true);
+      } else {
+         setAutocomplete(false);
+      }
+   };
+   
+  
 
    return (
       <>
@@ -62,11 +81,40 @@ export default function SearchBar() {
             <SearchIconWrapper>
                <SearchIcon />
             </SearchIconWrapper>
-            <StyledInputBase
-               placeholder="Search for movies powered by OMDB"
-            />
-
-          
+            <StyledInputBase placeholder="Search for movies powered by OMDB" onChange={renderList} onBlur={() => setAutocomplete(false)} />
+            <List
+               elevation={28}
+               sx={{
+                  backgroundColor: '#fff',
+                  position: 'absolute',
+                  width: '100%',
+                  marginTop: '2px',
+                  borderRadius: '2px',
+                  borderBottomLeftRadius: '10px',
+                  borderBottomRightRadius: '10px',
+                  display: `${autoComplete ? 'block' : 'none'}`,
+               }}
+            >
+               {state.length !== 0 ? (
+                  state.map((movie) => (
+                     <ListItem disablePadding key={movie.imdbID}>
+                        <ListItemButton
+                           // component="a"
+                           // href={`movie/${movie.id}`}
+                           onMouseDown={(e) => {
+                              window.location = `/movie/${movie.imdbID}`;
+                           }}
+                        >
+                           <ListItemText primary={movie.Title} />
+                        </ListItemButton>
+                     </ListItem>
+                  ))
+               ) : (
+                  <ListItem>
+                     <ListItemText primary={'No results Found ☹️ '} />
+                  </ListItem>
+               )}
+            </List>
          </SearchField>
       </>
    );
