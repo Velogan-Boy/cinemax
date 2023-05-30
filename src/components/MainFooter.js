@@ -46,7 +46,7 @@ export default function MainFooter() {
                   },
                   
                   {
-                     title: 'Computer Society of Anna University (CSAU)',
+                     title: 'College of Engineering, Guindy, ANNA UNIVERSITY',
                   },
                   {
                      title: `Velmurugan Jeyakumar`,

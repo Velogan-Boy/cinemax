@@ -1,13 +1,14 @@
-![image](https://user-images.githubusercontent.com/80830391/173199117-0e920c62-4984-411f-a7ef-4e42133f7b14.png)
+# Cinemax - Movie Search App
 
-# CSAU FRONTEND TASK -  Website that uses OMDB api functionalities
-  This project is made as a task for joining Vice Director of Web and App Domain in Computer Society of Anna University (CSAU)
+## About the Project:
+
+This is a Movie Search App built using React and Material UI. It uses OMDB api to fetch the movie details and TMDB api to fetch the movie poster. It is a responsive web app and can be used on any device.
   
-## TECH STACK USED:
+## Tech Stack:
 - React
 - Create React App (CRA) 
 - Material UI
-- Axios ( for calling API)
+- Axios ( for calling API )
 - API's Used: 
   1. OMDB api 
   2. TMDB api
